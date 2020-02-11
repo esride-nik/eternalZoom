@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Load a basic WebMap - 4.14</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.14/esri/themes/light/main.css" />
+
+  <script src="https://js.arcgis.com/4.14/"></script>
+
+  <script>
+    require(["esri/views/MapView", "esri/WebMap", "esri/widgets/CoordinateConversion", "esri/core/watchUtils"], function (MapView, WebMap, CoordinateConversion, watchUtils) {
+
+      var webmap = new WebMap({
+        portalItem: {
+          id: "ddbc80e2880c467682aaead75d8e0c1d"
+        }
+      });
+
+      var view = new MapView({
+        map: webmap,
+        container: "viewDiv"
+      });
+      view.popup.autoOpenEnabled = false;
+      view.ui.remove("zoom");
+      view.ui.remove("attribution");
+
+      const cc = new CoordinateConversion({
+        view: view
+      });
+      // view.ui.add(cc, "top-right");
+
+      var opts = {
+        duration: 50000
+      };
+
+      window.onmousemove = (e) => {
+        console.log(JSON.stringify(cc.currentLocation)); 
+      }
+
+      view.when((e) => {
+        view.on("click", (evt) => {
+          window.onmousemove = null;
+          view.goTo({
+            target: cc.currentLocation,
+            zoom: 15
+          }, opts);
+        });
+      })
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>
