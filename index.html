@@ -24,9 +24,31 @@
   <script>
     require(["esri/views/MapView", "esri/WebMap", "esri/widgets/CoordinateConversion", "esri/core/watchUtils"], function (MapView, WebMap, CoordinateConversion, watchUtils) {
 
+      let duration = 50000;
+      let itemId = "ddbc80e2880c467682aaead75d8e0c1d";
+      let maxZoomLevel = 15;
+
+      function getUrlParams() {
+        const queryParams = document.location.search.substr(1);
+        let result = {};
+
+        queryParams.split("?").map((params) => {
+          params.split("&").map((param) => {
+            var item = param.split("=");
+            result[item[0]] = decodeURIComponent(item[1]);
+          })
+        });
+
+        if (result.duration) duration = result.duration;
+        if (result.itemId) itemId = result.itemId;
+        if (result.maxZoomLevel) maxZoomLevel = result.maxZoomLevel;
+      }
+
+      getUrlParams();
+
       var webmap = new WebMap({
         portalItem: {
-          id: "ddbc80e2880c467682aaead75d8e0c1d"
+          id: itemId
         }
       });
 
@@ -44,11 +66,11 @@
       // view.ui.add(cc, "top-right");
 
       var opts = {
-        duration: 50000
+        duration: duration
       };
 
       window.onmousemove = (e) => {
-        console.log(JSON.stringify(cc.currentLocation)); 
+        console.log(JSON.stringify(cc.currentLocation));
       }
 
       view.when((e) => {
@@ -56,7 +78,7 @@
           window.onmousemove = null;
           view.goTo({
             target: cc.currentLocation,
-            zoom: 15
+            zoom: maxZoomLevel
           }, opts);
         });
       })
