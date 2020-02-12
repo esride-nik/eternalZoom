@@ -22,7 +22,7 @@
   <script src="https://js.arcgis.com/4.14/"></script>
 
   <script>
-    require(["esri/views/MapView", "esri/WebMap", "esri/widgets/CoordinateConversion", "esri/core/watchUtils"], function (MapView, WebMap, CoordinateConversion, watchUtils) {
+    require(["esri/views/MapView", "esri/WebMap", "esri/widgets/CoordinateConversion", "esri/core/watchUtils", "esri/widgets/Search"], function (MapView, WebMap, CoordinateConversion, watchUtils, Search) {
 
       let duration = 50000;
       let itemId = "ddbc80e2880c467682aaead75d8e0c1d";
@@ -74,12 +74,45 @@
       }
 
       view.when((e) => {
+
+        const searchWidget = new Search({
+          view: view
+        });
+        searchWidget.goToOverride = (view, goToParams) => {
+          goToParams.options = opts;
+          return view.goTo(goToParams.target, goToParams.options);
+        };
+        searchWidget.on("select-result", (sel) => {
+          window.onmousemove = null;
+
+          console.log("goTo", sel);
+          // view.goTo({
+          //   target: cc.currentLocation,
+          //   // center: [6715662.4755464317, -13703.433893634987],
+          //   zoom: maxZoomLevel
+          // }, opts).then((e) => {
+          //   console.log("goto finished", view.extent, JSON.stringify(view.extent));
+          // });
+        });
+        view.ui.add(searchWidget, {
+          position: "top-left",
+          index: 2
+        });
+
+
+
+
         view.on("click", (evt) => {
           window.onmousemove = null;
+
+          console.log("goTo", cc.currentLocation, JSON.stringify(cc.currentLocation));
           view.goTo({
             target: cc.currentLocation,
+            // center: [6715662.4755464317, -13703.433893634987],
             zoom: maxZoomLevel
-          }, opts);
+          }, opts).then((e) => {
+            console.log("goto finished", view.extent, JSON.stringify(view.extent));
+          });
         });
       })
 
