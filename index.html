@@ -66,7 +66,8 @@
       // view.ui.add(cc, "top-right");
 
       var opts = {
-        duration: duration
+        duration: duration,
+        easing: "ease-out"
       };
 
       window.onmousemove = (e) => {
@@ -76,24 +77,17 @@
       view.when((e) => {
 
         const searchWidget = new Search({
-          view: view
+          view: view,
+          popupEnabled: false,
+          resultGraphicEnabled: false,
+          container: "searchDiv"
         });
         searchWidget.goToOverride = (view, goToParams) => {
+          window.onmousemove = null;
+          document.getElementById("searchDiv").style.display = "none";
           goToParams.options = opts;
           return view.goTo(goToParams.target, goToParams.options);
         };
-        searchWidget.on("select-result", (sel) => {
-          window.onmousemove = null;
-
-          console.log("goTo", sel);
-          // view.goTo({
-          //   target: cc.currentLocation,
-          //   // center: [6715662.4755464317, -13703.433893634987],
-          //   zoom: maxZoomLevel
-          // }, opts).then((e) => {
-          //   console.log("goto finished", view.extent, JSON.stringify(view.extent));
-          // });
-        });
         view.ui.add(searchWidget, {
           position: "top-left",
           index: 2
@@ -104,6 +98,7 @@
 
         view.on("click", (evt) => {
           window.onmousemove = null;
+          document.getElementById("searchDiv").style.display = "none";
 
           console.log("goTo", cc.currentLocation, JSON.stringify(cc.currentLocation));
           view.goTo({
@@ -122,6 +117,7 @@
 
 <body>
   <div id="viewDiv"></div>
+  <div id="searchDiv"></div>
 </body>
 
 </html>
