@@ -27,6 +27,7 @@
       let duration = 50000;
       let itemId = "ddbc80e2880c467682aaead75d8e0c1d";
       let maxZoomLevel = 15;
+      let showWidgets = false;
 
       function getUrlParams() {
         const queryParams = document.location.search.substr(1);
@@ -42,6 +43,7 @@
         if (result.duration) duration = result.duration;
         if (result.itemId) itemId = result.itemId;
         if (result.maxZoomLevel) maxZoomLevel = result.maxZoomLevel;
+        if (result.showWidgets) showWidgets = result.showWidgets;
       }
 
       getUrlParams();
@@ -56,9 +58,11 @@
         map: webmap,
         container: "viewDiv"
       });
-      view.popup.autoOpenEnabled = false;
-      view.ui.remove("zoom");
-      view.ui.remove("attribution");
+      if (!showWidgets) {
+        view.popup.autoOpenEnabled = false;
+        view.ui.remove("zoom");
+        view.ui.remove("attribution");
+      }
 
       const cc = new CoordinateConversion({
         view: view
